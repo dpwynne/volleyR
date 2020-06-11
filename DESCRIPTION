@@ -1,11 +1,19 @@
 Package: volleyR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Volleyball Statistics with R
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Authors@R: c(person("Dwight", "Wynne", role = c("aut", "cre"), email = "dwwynne@fullerton.edu"),
+          person("Caleb", "Pena", role = c("aut")),
+          person("Mario", "Leon", role = c("aut"),
+          person("Brayden", "Nicholl", role = c("aut")))
+)
+Maintainer: Dwight Wynne <dwwynne@fullerton.edu>
+Description: Summary functions (and maybe a bit more) for volleyball data using R.
+    Development and maintenance of this package is an ongoing undergraduate student project at California State University, Fullerton.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    datavolley,
+    dplyr,
+    forcats
