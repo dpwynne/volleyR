@@ -1,20 +1,27 @@
-library(datavolley)
-library(tidyverse)
-
+#' Reception Summary
+#'
+#' Summarizes all serve receptions in a DataVolley play-by-play file
+#'
+#' @param plays a dv_plays object or data frame containing play-by-play data
+#' @param ... Variables to group by.
+#'
+#' @return A grouped data frame
+#'
+#' @export
 ReceptionSummary <- function(plays, ...){
 
   reception_ids <- which(plays$skill == "Reception") # Row numbers of all receptions
   attack_ids <- which(plays$skill == "Attack") # Row numbers of all attacks
-  is_same_run <- plays[reception_ids,]$team_run == plays[findnext(reception_ids, attack_ids),]$team_run  # Logical vector that takes TRUE if there is an attack in the same run as the reception. 
+  is_same_run <- plays[reception_ids,]$team_run == plays[findnext(reception_ids, attack_ids),]$team_run  # Logical vector that takes TRUE if there is an attack in the same run as the reception.
   is_side_out <- plays[findnext(reception_ids, attack_ids),]$evaluation_code == "#"  # Logical vector that takes TRUE if the next attack is a kill
-  
+
   receptions <- plays %>%
-    filter(skill == "Reception") %>% 
+    filter(skill == "Reception") %>%
     mutate(receive_rotation = case_when(team == home_team ~ home_setter_position,
-                                        team != home_team ~ visiting_setter_position)) %>% 
-    mutate(receive_rotation = recode(receive_rotation, `1` = 1, `2` = 6, `3` = 5, `4` = 4, `5` = 3, `6` = 2)) %>% 
+                                        team != home_team ~ visiting_setter_position)) %>%
+    mutate(receive_rotation = recode(receive_rotation, `1` = 1, `2` = 6, `3` = 5, `4` = 4, `5` = 3, `6` = 2)) %>%
     mutate(is_FBSO = is_same_run & is_side_out) # Logical vector that takes TRUE if the reception leads to a kill
-  
+
   output <- receptions %>%
     group_by(...) %>%
     summarise(Attempts = n(),
@@ -43,6 +50,6 @@ ReceptionSummary <- function(plays, ...){
               R4_pct = (sum(evaluation_code %in% c("#", "+") & receive_rotation == 4))/sum(receive_rotation == 4),
               R5_pct = (sum(evaluation_code %in% c("#", "+") & receive_rotation == 5))/sum(receive_rotation == 5),
               R6_pct = (sum(evaluation_code %in% c("#", "+") & receive_rotation == 6))/sum(receive_rotation == 6))
-  
+
   return(output)
 }
