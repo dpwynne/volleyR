@@ -14,7 +14,9 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    datavolley,
     dplyr,
-    forcats
+    forcats,
+    magrittr, 
+    rlang,
+    datavolley
 RoxygenNote: 7.0.2
