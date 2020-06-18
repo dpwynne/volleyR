@@ -7,19 +7,25 @@
 #'
 #' @return A grouped data frame
 #'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr n
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#'
 #' @export
 BlockSummary <- function(plays, ...){
   blocks <- plays %>%
-    filter(skill == "Block")
+    filter(.data$skill == "Block")
 
   output <- blocks %>%
     group_by(...) %>%
-    summarise(Stuffs = sum(evaluation_code == "#"),
-              Touches = n(),
-              GT = sum(evaluation_code %in% c("+", "#")),
-              `GT%` = GT/Touches,
-              Errors = sum(evaluation_code == "="),
-              `Error%` = Errors/Touches)
+    summarize(Touches =  n(),
+              Stuffs = BlockStuffs(.data$evaluation),
+              GT = .data$Stuffs + BlockPlus(.data$evaluation),
+              `GT%` = .data$GT/.data$Touches,
+              Errors = Errors(.data$evaluation),
+              `Error%` = .data$Errors/.data$Touches)
 
   return(output)
 }
