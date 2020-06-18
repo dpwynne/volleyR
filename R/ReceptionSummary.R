@@ -16,6 +16,7 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom dplyr n
+#' @importFrom rlang .data
 #'
 #' @export
 ReceptionSummary <- function(plays, ...){

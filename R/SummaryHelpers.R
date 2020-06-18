@@ -87,3 +87,24 @@ ReceptionRotationScore <- function(reception_evaluations, rotation_vector, rotat
   evaluations_to_code <- reception_evaluations[rotation_vector == rotation]
   return(ReceptionGood(evaluations_to_code)/length(evaluations_to_code))
 }
+
+
+Aces <- function(x){
+  sum(x == "Ace")
+}
+
+ServeOverpass <- function(x){
+  sum(x == "Positive, no attack")
+}
+
+ServePlus <- function(x){
+  sum(x == "Positive, opponent some attack")
+}
+
+ServeOK <- function(x){
+  sum(x == "OK, no first tempo possible")
+}
+
+ServeMinus <- function(x){
+  sum(x == "Negative, opponent free attack")
+}
