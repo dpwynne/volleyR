@@ -46,3 +46,44 @@ BlockPlus <- function(x){
 BlockMinus <- function(x){
   sum(x == "Poor, opposition to replay")
 }
+
+ReceptionOverpass <- function(x){
+  sum(x == "Poor, no attack")
+}
+
+Reception1 <- function(x){
+  sum(x == "Negative, limited attack")
+}
+
+Reception2 <- function(x){
+  sum(x == "OK, no first tempo possible")
+}
+
+Reception3 <- function(x){
+  sum(x == "Positive, attack")
+}
+
+ReceptionPerfect <- function(x){
+  sum(x == "Perfect pass")
+}
+
+ReceptionGood <- function(x){
+  Reception3(x) + ReceptionPerfect(x)
+}
+
+ReceptionGrade <- function(reception_evaluations, evaluation_grades){
+  ReceptionScores <- c(
+    Errors(reception_evaluations),
+    ReceptionOverpass(reception_evaluations),
+    Reception1(reception_evaluations),
+    Reception2(reception_evaluations),
+    Reception3(reception_evaluations),
+    ReceptionPerfect(reception_evaluations)
+  )
+  return(sum(ReceptionScores*evaluation_grades))
+}
+
+ReceptionRotationScore <- function(reception_evaluations, rotation_vector, rotation){
+  evaluations_to_code <- reception_evaluations[rotation_vector == rotation]
+  return(ReceptionGood(evaluations_to_code)/length(evaluations_to_code))
+}
