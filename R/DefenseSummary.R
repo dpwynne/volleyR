@@ -7,6 +7,16 @@
 #'
 #' @return A grouped data frame
 #'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom dplyr filter
+#' @importFrom dplyr left_join
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+#' @importFrom dplyr lead
+#' @importFrom rlang .data
+#'
 #' @export
 DigSummary <- function(plays, ...){
 
@@ -21,50 +31,50 @@ DigSummary <- function(plays, ...){
   attempt_ids <- which(plays$skill == "Dig" & (plays$skill_subtype != "Spike cover" | is.na(plays$skill_subtype)) & plays$evaluation_code != "-")
 
   CRT_1 <- which(rownames(plays) %in% (attempt_ids+1) & plays$skill == "Attack") - 1
-  CRT_1 <- CRT_1[rank(CRT_1) %in% which(plays[CRT_1,]$team == plays[CRT_1 + 1,]$team)]
+  CRT_1 <- CRT_1[rank(CRT_1) %in% which(plays$team[CRT_1] == lead(plays$team[CRT_1]))]
   CRT_2 <- which(rownames(plays) %in% (attempt_ids+2) & plays$skill == "Attack") - 2
-  CRT_2 <- CRT_2[rank(CRT_2) %in% which(plays[CRT_2,]$team == plays[CRT_2 + 2,]$team)]
+  CRT_2 <- CRT_2[rank(CRT_2) %in% which(plays$team[CRT_2] == lead(plays$team[CRT_2], 2))]
 
-  CRT_ids <- c(CRT_1, CRT_2) %>% unique()
+  CRT_ids <- unique(c(CRT_1, CRT_2))
 
   ### Find all dig attempts that lead to a kill (CNT)
   # These plays have the same critera as CRT but the attack must be a kill
-  # Note: VM seems to be using a different definition of a kill here than they used in the Attack section. In attacks, the point can be recorded immediately, after a reception error, or after a poor reception that leads to a setting error. Here, only the first two options are allowed.
+  # In attacks, the point can be recorded immediately, after a reception error, or after a poor reception that leads to a setting error. Here, only the first two options are allowed.
   CNT_1 <- which(rownames(plays) %in% (attempt_ids+1) & plays$skill == "Attack" & plays$evaluation_code == "#") - 1
-  CNT_1 <- CNT_1[rank(CNT_1) %in% which(plays[CNT_1,]$team == plays[CNT_1 + 1,]$team)]
+  CNT_1 <- CNT_1[rank(CNT_1) %in% which(plays$team[CNT_1] == plays$team[CNT_1 + 1])]
   CNT_2 <- which(rownames(plays) %in% (attempt_ids+2) & plays$skill == "Attack" & plays$evaluation_code == "#") - 2
-  CNT_2 <- CNT_2[rank(CNT_2) %in% which(plays[CNT_2,]$team == plays[CNT_2 + 2,]$team)]
+  CNT_2 <- CNT_2[rank(CNT_2) %in% which(plays$team[CNT_2] == plays$team[CNT_2 + 2])]
 
   CNT_ids <- c(CNT_1, CNT_2) %>% unique()
   CNT_ids <- which(rownames(plays) %in% (CNT_ids + 3) & (plays$evaluation_code != "!" | is.na(plays$evaluation_code))) - 3
 
-
-
   CRT <- plays[CRT_ids,] %>%
     group_by(...) %>%
-    summarise(CRT = n())
+    summarize(CRT = n())
 
   CNT <- plays[CNT_ids,] %>%
     group_by(...) %>%
-    summarise(CNT = n())
+    summarize(CNT = n())
 
 
   ### Produce output
   defense <- plays %>%
-    filter(skill == "Dig") %>%
-    filter(skill_subtype != "Spike cover" | is.na(skill_subtype))
+    filter(~ skill == "Dig") %>%
+    filter(~ skill_subtype != "Spike cover" | is.na(skill_subtype))
 
   output <- defense %>%
     group_by(...) %>%
-    summarise(Touched = n(),
-              Digs = sum(evaluation_code != "=")) %>%
+    summarize(Touched = n(),
+              Digs = sum(.data$evaluation_code != "=")) %>%
     left_join(CRT) %>%
     left_join(CNT) %>%
-    mutate(`T%` = Touched/sum(Touched),
-           `Digs%` = Digs/Touched,
-           `CRT%` = CRT/Touched,
-           `CNT%` = CNT/Touched) %>%
+    mutate(`T%` = .data$Touched/sum(.data$Touched),
+           `Digs%` = .data$Digs/.data$Touched,
+           `CRT%` = .data$CRT/.data$Touched,
+           `CNT%` = .data$CNT/.data$Touched) %>%
     select(..., Touched, `T%`, Digs, `Digs%`, CRT, `CRT%`, CNT, `CNT%`)
+
+  # Note: the select function may not work properly
 
   return(output)
 }

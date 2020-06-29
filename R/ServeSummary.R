@@ -40,7 +40,7 @@ ServeSummary <- function(plays, ...){
               Errors = Errors(.data$evaluation),
               `Error%` = .data$Errors/.data$Attempts,
               `Ace:Error` = .data$Aces/.data$Errors,
-              `Opp_FBSO%` = sum(is_FBSO)/sum(na.omit(is_received)),
+              `Opp_FBSO%` = sum(.data$is_FBSO)/sum(na.omit(.data$is_received)),
               Points = sum(.data$point_won_by == .data$team),
               Sideouts = .data$Attempts - .data$Points,
               `Point_Scoring%` = .data$Points/.data$Attempts)
