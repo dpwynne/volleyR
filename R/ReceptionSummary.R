@@ -21,17 +21,13 @@
 #' @export
 ReceptionSummary <- function(plays, ...){
 
-  reception_ids <- which(plays$skill == "Reception") # Row numbers of all receptions
-  attack_ids <- which(plays$skill == "Attack") # Row numbers of all attacks
-  is_same_run <- plays[reception_ids,]$team_run == plays[findnext(reception_ids, attack_ids),]$team_run  # Logical vector that takes TRUE if there is an attack in the same run as the reception.
-  is_side_out <- plays[findnext(reception_ids, attack_ids),]$evaluation_code == "#"  # Logical vector that takes TRUE if the next attack is a kill
+
 
   receptions <- plays %>%
-    filter(.data$skill == "Reception") %>%
+    FirstBallAttacks() %>%
     mutate(receive_rotation = case_when(.data$team == .data$home_team ~ .data$home_setter_position,
                                         .data$team != .data$home_team ~ .data$visiting_setter_position)) %>%
-    mutate(receive_rotation = fct_recode(as.factor(.data$receive_rotation), `1` = "1", `2` = "6", `3` = "5", `4` = "4", `5` = "3", `6` = "2")) %>%
-    mutate(is_FBSO = is_same_run & is_side_out) # Logical vector that takes TRUE if the reception leads to a kill
+    mutate(receive_rotation = fct_recode(as.factor(.data$receive_rotation), `1` = "1", `2` = "6", `3` = "5", `4` = "4", `5` = "3", `6` = "2"))
 
   output <- receptions %>%
     group_by(...) %>%
@@ -41,7 +37,13 @@ ReceptionSummary <- function(plays, ...){
               Good_Passes = ReceptionGood(.data$evaluation),
               `GoodPass%` = .data$Good_Passes/.data$Attempts,
               `EandO%` = (Errors(.data$evaluation) + ReceptionOverpass(.data$evaluation))/.data$Attempts,
-              `FBSO%` = sum(.data$is_FBSO)/.data$Attempts,
+              FB_Attacks = sum(!is.na(.data$attack_result)),
+              FB_CRT = .data$FB_Attacks/.data$Attempts,
+              FB_Kills = Kills(.data$attack_result),
+              FB_Stuffs = AttackStuffs(.data$attack_result),
+              FB_Errors = Errors(.data$attack_result),
+              `FBSO%` = .data$FB_Kills/.data$Attempts,
+              FB_Efficiency = AttackEff(.data$FB_Attacks, .data$FB_Kills, .data$FB_Stuffs, .data$FB_Errors),
               Jump_Serves = sum(.data$skill_type == "Jump serve reception"),
               J_pct = ReceptionGood(.data$evaluation[.data$skill_type == "Jump serve reception"])/.data$Jump_Serves,
               Jump_Floats = sum(.data$skill_type == "Jump-float serve reception"),
@@ -57,3 +59,4 @@ ReceptionSummary <- function(plays, ...){
 
   return(output)
 }
+
