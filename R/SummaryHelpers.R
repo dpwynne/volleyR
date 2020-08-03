@@ -1,23 +1,23 @@
 Kills <- function(x){
-  sum(x == "Winning attack")
+  sum(x == "Winning attack", na.rm = TRUE)
 }
 
 AttackStuffs <- function(x){
-  sum(x == "Blocked")
+  sum(x == "Blocked", na.rm = TRUE)
 }
 
 Errors <- function(x){
   # This is always an error code
-  sum(x == "Error")
+  sum(x == "Error", na.rm = TRUE)
 }
 
 P0 <- function(x){
   # x is character vector of attack evaluations
-  sum(x == "Positive, good attack")
+  sum(x == "Positive, good attack", na.rm = TRUE)
 }
 
 M0 <- function(x){
-  sum(x == "Poor, easily dug")
+  sum(x == "Poor, easily dug", na.rm = TRUE)
 }
 
 AttackEff <- function(Attempts, Kills, Stuffs, Errors, P0 = 0, M0 = 0){
@@ -36,35 +36,35 @@ PhaseAttackEff <- function(evaluation, phase_vector, phase = "Reception"){
 }
 
 BlockStuffs <- function(x){
-  sum(x == "Winning block")
+  sum(x == "Winning block", na.rm = TRUE)
 }
 
 BlockPlus <- function(x){
-  sum(x == "Positive, block touch")
+  sum(x == "Positive, block touch", na.rm = TRUE)
 }
 
 BlockMinus <- function(x){
-  sum(x == "Poor, opposition to replay")
+  sum(x == "Poor, opposition to replay", na.rm = TRUE)
 }
 
 ReceptionOverpass <- function(x){
-  sum(x == "Poor, no attack")
+  sum(x == "Poor, no attack", na.rm = TRUE)
 }
 
 Reception1 <- function(x){
-  sum(x == "Negative, limited attack")
+  sum(x == "Negative, limited attack", na.rm = TRUE)
 }
 
 Reception2 <- function(x){
-  sum(x == "OK, no first tempo possible")
+  sum(x == "OK, no first tempo possible", na.rm = TRUE)
 }
 
 Reception3 <- function(x){
-  sum(x == "Positive, attack")
+  sum(x == "Positive, attack", na.rm = TRUE)
 }
 
 ReceptionPerfect <- function(x){
-  sum(x == "Perfect pass")
+  sum(x == "Perfect pass", na.rm = TRUE)
 }
 
 ReceptionGood <- function(x){
@@ -90,21 +90,21 @@ ReceptionRotationScore <- function(reception_evaluations, rotation_vector, rotat
 
 
 Aces <- function(x){
-  sum(x == "Ace")
+  sum(x == "Ace", na.rm = TRUE)
 }
 
 ServeOverpass <- function(x){
-  sum(x == "Positive, no attack")
+  sum(x == "Positive, no attack", na.rm = TRUE)
 }
 
 ServePlus <- function(x){
-  sum(x == "Positive, opponent some attack")
+  sum(x == "Positive, opponent some attack", na.rm = TRUE)
 }
 
 ServeOK <- function(x){
-  sum(x == "OK, no first tempo possible")
+  sum(x == "OK, no first tempo possible", na.rm = TRUE)
 }
 
 ServeMinus <- function(x){
-  sum(x == "Negative, opponent free attack")
+  sum(x == "Negative, opponent free attack", na.rm = TRUE)
 }
