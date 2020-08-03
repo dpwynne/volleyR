@@ -14,14 +14,16 @@
 #'
 #' @export
 FirstBallAttacks <- function(plays){
+
   reception_ids <- which(plays$skill == "Reception")
   FB_attack_ids <- which(plays$skill == "Attack" & plays$phase == "Reception") # Row numbers of all attacks
 
   receptions <- plays %>% slice(reception_ids)
-  FB_attacks <- plays %>% slice(FB_attack_ids) %>% select(.data$point_id,
+  FB_attacks <- plays %>% slice(FB_attack_ids) %>% select(.data$match_id,
+                                                          .data$point_id,
                                                           attack_team = .data$team,
                                                           attack_result = .data$evaluation)
-  reception_attacks <- left_join(receptions, FB_attacks, by = "point_id")
+  reception_attacks <- left_join(receptions, FB_attacks, by = c("match_id", "point_id"))
 
   return(reception_attacks)
 }
