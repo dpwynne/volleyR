@@ -60,7 +60,7 @@ DigSummary <- function(plays, ...){
   ### Produce output
   defense <- plays %>%
     filter(.data$skill == "Dig") %>%
-    filter(.data$skill_subtype != "Spike cover" | is.na(skill_subtype))
+    filter(.data$skill_subtype != "Spike cover" | is.na(.data$skill_subtype))
 
   # Note: suppress messages because we don't know exactly what to join by, it's in the ...
   output <- suppressMessages({
@@ -74,7 +74,7 @@ DigSummary <- function(plays, ...){
            `Digs%` = .data$Digs/.data$Touched,
            `CRT%` = .data$CRT/.data$Touched,
            `CNT%` = .data$CNT/.data$Touched) %>%
-    select(..., Touched, `T%`, Digs, `Digs%`, CRT, `CRT%`, CNT, `CNT%`)
+    select(..., .data$Touched, .data$`T%`, .data$Digs, .data$`Digs%`, .data$CRT, .data$`CRT%`, .data$CNT, .data$`CNT%`)
 
   })
   # Note: the select function may not work properly

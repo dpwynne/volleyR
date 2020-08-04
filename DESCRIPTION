@@ -1,7 +1,7 @@
 Package: volleyR
 Type: Package
 Title: Volleyball Statistics with R
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Dwight", "Wynne", role = c("aut", "cre"), email = "dwwynne@fullerton.edu"),
           person("Caleb", "Pena", role = c("aut")),
           person("Mario", "Leon", role = c("aut")),
@@ -10,7 +10,7 @@ Authors@R: c(person("Dwight", "Wynne", role = c("aut", "cre"), email = "dwwynne@
 Maintainer: Dwight Wynne <dwwynne@fullerton.edu>
 Description: Summary functions (and maybe a bit more) for volleyball data using R.
     Development and maintenance of this package is an ongoing undergraduate student project at California State University, Fullerton.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
