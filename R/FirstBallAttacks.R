@@ -10,6 +10,7 @@
 #' @importFrom dplyr slice
 #' @importFrom dplyr select
 #' @importFrom dplyr left_join
+#' @importFrom dplyr lag
 #' @importFrom rlang .data
 #'
 #' @export
@@ -23,6 +24,13 @@ FirstBallAttacks <- function(plays){
                                                           .data$point_id,
                                                           attack_team = .data$team,
                                                           attack_result = .data$evaluation)
+
+  # each reception can only have one attack
+  duplicated_ids <- which(FB_attacks$match_id == lag(FB_attacks$match_id) & FB_attacks$point_id == lag(FB_attacks$point_id))
+  if(length(duplicated_ids) > 0){
+   FB_attacks <- FB_attacks[-duplicated_ids,]
+  }
+
   reception_attacks <- left_join(receptions, FB_attacks, by = c("match_id", "point_id"))
 
   return(reception_attacks)

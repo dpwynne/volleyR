@@ -59,13 +59,15 @@ DigSummary <- function(plays, ...){
 
   ### Produce output
   defense <- plays %>%
-    filter(~ skill == "Dig") %>%
-    filter(~ skill_subtype != "Spike cover" | is.na(skill_subtype))
+    filter(.data$skill == "Dig") %>%
+    filter(.data$skill_subtype != "Spike cover" | is.na(skill_subtype))
 
-  output <- defense %>%
+  # Note: suppress messages because we don't know exactly what to join by, it's in the ...
+  output <- suppressMessages({
+    defense %>%
     group_by(...) %>%
     summarize(Touched = n(),
-              Digs = sum(.data$evaluation_code != "=")) %>%
+              Digs = sum(.data$evaluation != "Error")) %>%
     left_join(CRT) %>%
     left_join(CNT) %>%
     mutate(`T%` = .data$Touched/sum(.data$Touched),
@@ -74,6 +76,7 @@ DigSummary <- function(plays, ...){
            `CNT%` = .data$CNT/.data$Touched) %>%
     select(..., Touched, `T%`, Digs, `Digs%`, CRT, `CRT%`, CNT, `CNT%`)
 
+  })
   # Note: the select function may not work properly
 
   return(output)
