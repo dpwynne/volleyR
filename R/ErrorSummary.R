@@ -29,7 +29,7 @@ ErrorSummary <- function(plays, ...){
 
   for(i in 1:7){
     error_df <- plays %>%
-      filter(skill == touch_types[i]) %>%
+      filter(.data$skill == touch_types[i]) %>%
       group_by(...) %>%
       summarize(Attempts = n(),
                 Errors = Errors(.data$evaluation) + AttackStuffs(.data$evaluation),
