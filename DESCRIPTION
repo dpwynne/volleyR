@@ -1,7 +1,7 @@
 Package: volleyR
 Type: Package
 Title: Volleyball Statistics with R
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(person("Dwight", "Wynne", role = c("aut", "cre"), email = "dwwynne@fullerton.edu"),
           person("Caleb", "Pena", role = c("aut")),
           person("Mario", "Leon", role = c("aut")),
@@ -18,5 +18,6 @@ Imports:
     forcats,
     magrittr, 
     rlang,
+    tidyr,
     datavolley
 RoxygenNote: 7.0.2
