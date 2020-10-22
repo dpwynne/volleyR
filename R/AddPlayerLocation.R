@@ -4,7 +4,7 @@
 #'
 #' @param plays a dv_plays object or data frame containing play-by-play data
 #'
-#' @return The same object, with four new columns (player_location, player_position)
+#' @return The same object, with two new columns (player_location, player_position)
 #'
 #' @importFrom dplyr mutate
 #' @importFrom dplyr case_when
@@ -15,11 +15,11 @@
 #' @export
 
 AddPlayerLocation <- function(plays){
-  
+
   if(!("team_rotation" %in% names(plays))) plays <- AddRotations(plays)
-  
+
   plays <- plays %>% mutate(team_rotation = fct_relevel(.data$team_rotation, c("1", "2", "3", "4", "5", "6")))
-  
+
   player_location <- plays %>% mutate(
     player_location = if_else(
       .data$team == .data$home_team,

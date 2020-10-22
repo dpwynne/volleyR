@@ -10,7 +10,7 @@ AddPlayerLocation(plays)
 \item{plays}{a dv_plays object or data frame containing play-by-play data}
 }
 \value{
-The same object, with four new columns (player_location, player_position)
+The same object, with two new columns (player_location, player_position)
 }
 \description{
 Creates an additional set of two columns indicating the court location and presumed position of the player
