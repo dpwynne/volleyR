@@ -29,7 +29,7 @@ ReceptionSummary <- function(plays, ...){
                                         .data$team != .data$home_team ~ .data$visiting_setter_position)) %>%
     mutate(receive_rotation = fct_recode(as.factor(.data$receive_rotation), `1` = "1", `2` = "6", `3` = "5", `4` = "4", `5` = "3", `6` = "2"))
 
-  output <- receptions %>%
+  output <- suppressMessages(receptions %>%
     group_by(...) %>%
     summarize(Attempts = n(),
               Passing_Grade_3 = ReceptionGrade(.data$evaluation, c(0, 0.5, 1, 2, 3, 3))/.data$Attempts,
@@ -39,11 +39,18 @@ ReceptionSummary <- function(plays, ...){
               `EandO%` = (Errors(.data$evaluation) + ReceptionOverpass(.data$evaluation))/.data$Attempts,
               FB_Attacks = sum(!is.na(.data$attack_result)),
               FB_CRT = .data$FB_Attacks/.data$Attempts,
+              FB_In_System_Attacks = sum(na.omit(.data$attack_system == "In System")),
+              FB_In_System_CRT = .data$FB_In_System_Attacks/.data$Attempts,
               FB_Kills = Kills(.data$attack_result),
               FB_Stuffs = AttackStuffs(.data$attack_result),
               FB_Errors = Errors(.data$attack_result),
               `FBSO%` = .data$FB_Kills/.data$Attempts,
               FB_Efficiency = AttackEff(.data$FB_Attacks, .data$FB_Kills, .data$FB_Stuffs, .data$FB_Errors),
+              FB_In_System_Kills = sum(na.omit(.data$attack_result == "Winning attack" & .data$attack_system == "In System")),
+              FB_In_System_Stuffs = sum(na.omit(.data$attack_result == "Blocked" & .data$attack_system == "In System")),
+              FB_In_System_Errors = sum(na.omit(.data$attack_result == "Error" & .data$attack_system == "In System")),
+              `FB_In_System_Kill%` = .data$FB_In_System_Kills/.data$FB_In_System_Attacks,
+              FB_In_System_Efficiency = AttackEff(.data$FB_In_System_Attacks, .data$FB_In_System_Kills, .data$FB_In_System_Stuffs, .data$FB_In_System_Errors),
               Jump_Serves = sum(.data$skill_type == "Jump serve reception"),
               J_pct = ReceptionGood(.data$evaluation[.data$skill_type == "Jump serve reception"])/.data$Jump_Serves,
               Jump_Floats = sum(.data$skill_type == "Jump-float serve reception"),
@@ -56,6 +63,7 @@ ReceptionSummary <- function(plays, ...){
               R4_pct = ReceptionRotationScore(.data$evaluation, .data$receive_rotation, "4"),
               R5_pct = ReceptionRotationScore(.data$evaluation, .data$receive_rotation, "5"),
               R6_pct = ReceptionRotationScore(.data$evaluation, .data$receive_rotation, "6"))
+  )
 
   return(output)
 }
