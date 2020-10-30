@@ -16,6 +16,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr lead
 #' @importFrom rlang .data
+#' @importFrom rlang dots_n
 #'
 #' @export
 DigSummary <- function(plays, ...){
@@ -27,6 +28,8 @@ DigSummary <- function(plays, ...){
   # (3) The attack must be by the same team that made the dig
   # (4) The dig must allow for a "structured" attack, in other words, it must be in system
   # Note: In theory, the attack can come on the play right after the dig. In practice, those plays almost universally violate criterion (4).
+
+  if(dots_n(...) == 0) stop("This function requires at least one variable to group by")
 
   attempt_ids <- which(plays$skill == "Dig" & (plays$skill_subtype != "Spike cover" | is.na(plays$skill_subtype)) & plays$evaluation_code != "-")
 
@@ -50,11 +53,11 @@ DigSummary <- function(plays, ...){
 
   CRT <- plays[CRT_ids,] %>%
     group_by(...) %>%
-    summarize(CRT = n())
+    summarize(CRT = n(), .groups = "keep")
 
   CNT <- plays[CNT_ids,] %>%
     group_by(...) %>%
-    summarize(CNT = n())
+    summarize(CNT = n(), .groups = "keep")
 
 
   ### Produce output
@@ -62,19 +65,20 @@ DigSummary <- function(plays, ...){
     filter(.data$skill == "Dig") %>%
     filter(.data$skill_subtype != "Spike cover" | is.na(.data$skill_subtype))
 
+
   # Note: suppress messages because we don't know exactly what to join by, it's in the ...
   output <- suppressMessages({
     defense %>%
     group_by(...) %>%
-    summarize(Touched = n(),
+    summarize(Attempts = n(),
               Digs = sum(.data$evaluation != "Error")) %>%
     left_join(CRT) %>%
     left_join(CNT) %>%
-    mutate(`T%` = .data$Touched/sum(.data$Touched),
-           `Digs%` = .data$Digs/.data$Touched,
-           `CRT%` = .data$CRT/.data$Touched,
-           `CNT%` = .data$CNT/.data$Touched) %>%
-    select(..., .data$Touched, .data$`T%`, .data$Digs, .data$`Digs%`, .data$CRT, .data$`CRT%`, .data$CNT, .data$`CNT%`)
+    mutate(`T%` = .data$Attempts/sum(.data$Attempts),
+           `Digs%` = .data$Digs/.data$Attempts,
+           `CRT%` = .data$CRT/.data$Attempts,
+           `CNT%` = .data$CNT/.data$Attempts) %>%
+    select(..., .data$Attempts, .data$`T%`, .data$Digs, .data$`Digs%`, .data$CRT, .data$`CRT%`, .data$CNT, .data$`CNT%`)
 
   })
   # Note: the select function may not work properly

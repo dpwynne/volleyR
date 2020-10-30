@@ -40,7 +40,7 @@ BlockStuffs <- function(x){
 }
 
 BlockPlus <- function(x){
-  sum(x == "Positive, block touch", na.rm = TRUE)
+  sum(x == "Positive block", na.rm = TRUE)
 }
 
 BlockMinus <- function(x){
