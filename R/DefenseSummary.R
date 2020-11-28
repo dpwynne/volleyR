@@ -29,7 +29,7 @@ DigSummary <- function(plays, ...){
   # (4) The dig must allow for a "structured" attack, in other words, it must be in system
   # Note: In theory, the attack can come on the play right after the dig. In practice, those plays almost universally violate criterion (4).
 
-  if(dots_n(...) == 0) stop("This function requires at least one variable to group by")
+  if(rlang::dots_n(...) == 0) stop("This function requires at least one variable to group by")
 
   attempt_ids <- which(plays$skill == "Dig" & (plays$skill_subtype != "Spike cover" | is.na(plays$skill_subtype)) & plays$evaluation_code != "-")
 
