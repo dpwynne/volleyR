@@ -20,6 +20,20 @@
 #' @export
 ServeSummary <- function(plays, ...){
 
+
+  ## There shouldn't be any issue with multiple serves in the same point, but if there is this will catch it
+  duplicate_serves <- plays %>% filter(skill == "Serve") %>%
+    group_by(match_id, point_id) %>% summarize(n = n(), .groups = "drop") %>%
+    filter(n > 1) %>% select(match_id, point_id)
+
+  if (nrow(duplicate_serves) > 0){  # if any duplicate serves
+    warning("The following points have more than one serve and have been removed from the summary:\n",
+            paste(capture.output(print(duplicate_serves)), collapse = "\n"))
+
+    # For now we simply remove those points entirely from the summary
+    plays <- plays %>% filter(!(match_id %in% duplicate_serves$match_id & point_id %in% duplicate_serves$point_id))
+  }
+
   serve_ids <- which(plays$skill == "Serve")   # Row numbers of all serves
 
   # have to remove attacks being in or out of system before creating FB_attacks, because
