@@ -25,6 +25,7 @@ AddPossessions <- function(plays){
            possession_start = case_when(  # find touch where possession starts
              is.na(skill) ~ NA,  # if skill is NA then no touch
              skill %in% c("Dig", "Reception", "Freeball") & evaluation == "Error" ~ FALSE,
+             skill == "Block" & lag(skill) != "Attack" ~ TRUE, # sometimes attacks are misclassified as blocks
              lag(skill) == "Block" ~ TRUE,  # possession always changes after a block
              team_switch & skill != "Block" ~ TRUE, # possession changes if new team touches unless it's a block
              TRUE ~ FALSE  # if otherwise, it's not a possession-starting touch

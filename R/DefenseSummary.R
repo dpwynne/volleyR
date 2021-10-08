@@ -34,9 +34,9 @@ DigSummary <- function(plays, ...){
   attempt_ids <- which(plays$skill == "Dig" & (plays$skill_subtype != "Spike cover" | is.na(plays$skill_subtype)) & plays$evaluation_code != "-")
 
   CRT_1 <- which(rownames(plays) %in% (attempt_ids+1) & plays$skill == "Attack") - 1
-  CRT_1 <- CRT_1[rank(CRT_1) %in% which(plays$team[CRT_1] == lead(plays$team[CRT_1]))]
+  CRT_1 <- CRT_1[rank(CRT_1) %in% which(plays$team[CRT_1] == lead(plays$team)[CRT_1])]
   CRT_2 <- which(rownames(plays) %in% (attempt_ids+2) & plays$skill == "Attack") - 2
-  CRT_2 <- CRT_2[rank(CRT_2) %in% which(plays$team[CRT_2] == lead(plays$team[CRT_2], 2))]
+  CRT_2 <- CRT_2[rank(CRT_2) %in% which(plays$team[CRT_2] == lead(plays$team, 2)[CRT_2])]
 
   CRT_ids <- unique(c(CRT_1, CRT_2))
 
